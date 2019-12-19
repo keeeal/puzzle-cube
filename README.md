@@ -2,6 +2,8 @@
 
 A randomly generated solid CAD puzzle cube. I wrote this as an exercise while learning how to use python to generate 3D-printable objects.
 
+![puzzle-cube](https://i.imgur.com/PfvlCmF.png)
+
 ## Usage
 
 ### Prerequisites
