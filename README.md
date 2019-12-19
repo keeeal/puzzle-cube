@@ -15,12 +15,12 @@ pip install solidpython numpy
 ### Running
 
 ```
-puzzle_cube.py [--size SIZE] [--shape X Y Z] [--sep] [--stl]
+python puzzle_cube.py [--size SIZE] [--shape X Y Z] [--sep] [--stl]
 ```
 
 optional arguments:
 
- - *--size* The size of a single cell of the puzzle. Default: 10 mm.
- - *--shape* (X Y Z) The shape of the puzzle. Default: (4, 4, 4)
- - *--sep* Generate one file per puzzle piece. Otherwise all pieces will be generated in a single file.
- - *--stl* Attempt to generate as STL rather than SCAD files. This requires the OpenSCAD CLI to be available.
+ - **--size** The size of a single cell of the puzzle. Default: 10 mm.
+ - **--shape** The shape of the puzzle. Default: (4, 4, 4)
+ - **--sep** Generate one file per puzzle piece. Otherwise all pieces will be generated in a single file.
+ - **--stl** Attempt to generate as STL rather than SCAD files. This requires the OpenSCAD CLI to be available.
