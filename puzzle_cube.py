@@ -7,7 +7,13 @@ import numpy as np
 from solid import *
 from solid.utils import *
 
-def puzzle_cube(size=10.0, shape=(4,4,4), sep=False, stl=False):
+def save(obj, name, stl=False):
+    scad_render_to_file(obj, name + '.scad')
+    if stl:
+        call(['openscad', name + '.scad', '-o', name + '.stl'])
+        remove(name + '.scad')
+
+def puzzle_cube(size=10.0, shape=(5,5,5), sep=False, stl=False):
 
     # make an array and number the faces
     x, y, z = shape
@@ -47,11 +53,7 @@ def puzzle_cube(size=10.0, shape=(4,4,4), sep=False, stl=False):
                     if value:
                         piece += translate([10*i, 10*j, 0])(cube([10, 10, 10]))
 
-            name = 'piece_' + str(n)
-            scad_render_to_file(piece, name + '.scad')
-            if stl:
-                call(['openscad', name + '.scad', '-o', name + '.stl'])
-                remove(name + '.scad')
+            save(piece, 'piece_' + str(n), stl=stl)
 
     # save all pieces as one file
     else:
@@ -63,17 +65,13 @@ def puzzle_cube(size=10.0, shape=(4,4,4), sep=False, stl=False):
                 if value:
                     pieces += translate([size*i, size*j, 0])(cube(size))
 
-        name = 'puzzle_cube'
-        scad_render_to_file(pieces, name + '.scad')
-        if stl:
-            call(['openscad', name + '.scad', '-o', name + '.stl'])
-            remove(name + '.scad')
+        save(pieces, 'puzzle_cube', stl=stl)
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--size', type=float, default=10.0)
-    parser.add_argument('--shape', nargs=3, type=int, default=(4,4,4))
+    parser.add_argument('--shape', nargs=3, type=int, default=(5,5,5))
     parser.add_argument('--sep', action='store_true')
     parser.add_argument('--stl', action='store_true')
     puzzle_cube(**vars(parser.parse_args()))
