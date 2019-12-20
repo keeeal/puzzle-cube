@@ -23,6 +23,6 @@ python puzzle_cube.py [--size SIZE] [--shape X Y Z] [--sep] [--stl]
 optional arguments:
 
  - *--size* — The size of a single cell of the puzzle. Default: 10 mm.
- - *--shape* — The dimensions of the puzzle. Default: (4, 4, 4)
+ - *--shape* — The dimensions of the puzzle. Default: (5, 5, 5)
  - *--sep* — Generate one file per puzzle piece. Otherwise all pieces will be generated in a single file.
  - *--stl* — Attempt to generate STL rather than SCAD files. This requires the OpenSCAD CLI to be available.
