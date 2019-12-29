@@ -13,6 +13,11 @@ def save(obj, name, stl=False):
         call(['openscad', name + '.scad', '-o', name + '.stl'])
         remove(name + '.scad')
 
+def element(size, radius=1, tol=.2, segments=32):
+    return hull()(tuple(translate([i,j,k])(sphere(radius, segments=32))
+        for i, j, k in product(*3*[(radius + tol, size - radius - tol)])
+    ))
+
 def puzzle_cube(size=10.0, shape=(5,5,5), sep=False, stl=False):
 
     # make an array and number the faces
@@ -51,21 +56,18 @@ def puzzle_cube(size=10.0, shape=(5,5,5), sep=False, stl=False):
             for i, row in enumerate(face):
                 for j, value in enumerate(row):
                     if value:
-                        piece += translate([10*i, 10*j, 0])(cube([10, 10, 10]))
+                        piece += translate([size*i, size*j, 0])(element(size))
+                        if i and face[i-1][j]:
+                            piece += translate([size*(i-.5)+1, size*j+1, 1])(cube(size-2))
+                        if j and face[i][j-1]:
+                            piece += translate([size*i+1, size*(j-.5)+1, 1])(cube(size-2))
 
             save(piece, 'piece_' + str(n), stl=stl)
 
     # save all pieces as one file
     else:
         pieces = union()
-        rows = [row for face in faces for row in list(face) + [[]]]
 
-        for i, row in enumerate(rows):
-            for j, value in enumerate(row):
-                if value:
-                    pieces += translate([size*i, size*j, 0])(cube(size))
-
-        save(pieces, 'puzzle_cube', stl=stl)
 
 if __name__ == '__main__':
     import argparse
