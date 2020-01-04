@@ -10,13 +10,16 @@ from solid.utils import *
 def save(obj, name, stl=False):
     scad_render_to_file(obj, name + '.scad')
     if stl:
-        call(['openscad', name + '.scad', '-o', name + '.stl'])
+        call(('openscad', name + '.scad', '-o', name + '.stl'))
         remove(name + '.scad')
 
-def element(size, radius=1, tol=.2, segments=32):
-    return hull()(tuple(translate([i,j,k])(sphere(radius, segments=32))
-        for i, j, k in product(*3*[(radius + tol, size - radius - tol)])
-    ))
+def element(x, y, size, r=1, tol=.2, segments=32):
+    return translate([size*x, size*y, 0])(hull()(
+        tuple(translate([i, j, k])(sphere(r, segments=segments))
+            for i, j, k in product(*3*[(r+tol, size-r-tol)]))))
+
+def connector(x, y, size, r=1, tol=.2, segments=32):
+    return translate([size*x+r+tol, size*y+r+tol, r+tol])(cube(size-2*(r+tol)))
 
 def puzzle_cube(size=10.0, shape=(5,5,5), sep=False, stl=False):
 
@@ -42,38 +45,32 @@ def puzzle_cube(size=10.0, shape=(5,5,5), sep=False, stl=False):
         array[idx] = np.random.choice(
             list(set(array[tuple(idx + i)] for i in delta)))
 
-    # get face shapes
+    # get faces
     faces = []
     for n, (axis, end) in enumerate(product(range(3), (0, -1))):
         idx = 3*[slice(None)]
         idx[axis] = end
-        faces.append(array[tuple(idx)] == n + 1)
+        faces.append(array[tuple(idx)] == face_values[int(n/2)][n%2])
+
+    # convert faces into solid pieces
+    pieces = []
+    for n, face in enumerate(faces):
+        pieces.append(union())
+        for i, row in enumerate(face):
+            for j, value in enumerate(row):
+                if value:
+                    pieces[-1] += element(i, j, size)
+                    if i and face[i-1][j]: pieces[-1] += connector(i-.5, j, size)
+                    if j and face[i][j-1]: pieces[-1] += connector(i, j-.5, size)
 
     # save each piece as a separate file
-    if sep:
-        for n, face in enumerate(faces):
-            piece = union()
-            for i, row in enumerate(face):
-                for j, value in enumerate(row):
-                    if value:
-                        piece += translate([size*i, size*j, 0])(element(size))
-                        if i and face[i-1][j]:
-                            piece += translate([size*(i-.5)+1, size*j+1, 1])(cube(size-2))
-                        if j and face[i][j-1]:
-                            piece += translate([size*i+1, size*(j-.5)+1, 1])(cube(size-2))
-
-            save(piece, 'piece_' + str(n), stl=stl)
-
-    # save all pieces as one file
-    else:
-        pieces = union()
-
+    for n, piece in enumerate(pieces):
+        save(piece, 'piece_' + str(n), stl=stl)
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--size', type=float, default=10.0)
     parser.add_argument('--shape', nargs=3, type=int, default=(5,5,5))
-    parser.add_argument('--sep', action='store_true')
     parser.add_argument('--stl', action='store_true')
     puzzle_cube(**vars(parser.parse_args()))

@@ -1,6 +1,6 @@
 # puzzle-cube
 
-A randomly generated solid CAD puzzle cube. I wrote this as an exercise while learning how to generate 3D-printable objects using python.
+A randomly generated solid CAD puzzle cube. I wrote this while learning how to generate 3D-printable objects using python.
 
 ![puzzle-cube](https://i.imgur.com/PfvlCmF.png)
 
@@ -17,12 +17,11 @@ pip install solidpython numpy
 ### Running
 
 ```
-python puzzle_cube.py [--size SIZE] [--shape X Y Z] [--sep] [--stl]
+python puzzle_cube.py [--size SIZE] [--shape X Y Z] [--stl]
 ```
 
 optional arguments:
 
- - *--size* — The size of a single cell of the puzzle. Default: 10 mm.
+ - *--size* — The size-length of a single cell in the puzzle. Default: 10 mm.
  - *--shape* — The dimensions of the puzzle. Default: (5, 5, 5)
- - *--sep* — Generate one file per puzzle piece. Otherwise all pieces will be generated in a single file.
- - *--stl* — Attempt to generate STL rather than SCAD files. This requires the OpenSCAD CLI to be available.
+ - *--stl* — Attempt to generate STL rather than SCAD files. (Requires the OpenSCAD)
