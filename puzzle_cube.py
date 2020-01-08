@@ -7,21 +7,23 @@ import numpy as np
 from solid import *
 from solid.utils import *
 
-def save(obj, name, stl=False):
+def save(obj, name, stl=False, rm=True):
     scad_render_to_file(obj, name + '.scad')
     if stl:
         call(('openscad', name + '.scad', '-o', name + '.stl'))
-        remove(name + '.scad')
+        if rm: remove(name + '.scad')
 
-def element(x, y, size, r=1, tol=.2, segments=32):
+def element(x, y, size, r=1, tol=.1, segments=32):
     return translate([size*x, size*y, 0])(hull()(
         tuple(translate([i, j, k])(sphere(r, segments=segments))
             for i, j, k in product(*3*[(r+tol, size-r-tol)]))))
 
-def connector(x, y, size, r=1, tol=.2, segments=32):
+def connector(x, y, size, r=1, tol=.1):
     return translate([size*x+r+tol, size*y+r+tol, r+tol])(cube(size-2*(r+tol)))
 
-def puzzle_cube(size=10.0, shape=(5,5,5), sep=False, stl=False):
+def puzzle_cube(size=10.0, shape=(5,5,5), stl=False, tol=.1):
+    if any(i < 3 for i in shape):
+        raise ValueError('Puzzle dimensions must be 3 or greater.')
 
     # make an array and number the faces
     x, y, z = shape
@@ -59,9 +61,11 @@ def puzzle_cube(size=10.0, shape=(5,5,5), sep=False, stl=False):
         for i, row in enumerate(face):
             for j, value in enumerate(row):
                 if value:
-                    pieces[-1] += element(i, j, size)
-                    if i and face[i-1][j]: pieces[-1] += connector(i-.5, j, size)
-                    if j and face[i][j-1]: pieces[-1] += connector(i, j-.5, size)
+                    pieces[-1] += element(i, j, size, r=size/10, tol=tol)
+                    if i and face[i-1][j]:
+                        pieces[-1] += connector(i-.5, j, size, size/10, tol)
+                    if j and face[i][j-1]:
+                        pieces[-1] += connector(i, j-.5, size, size/10, tol)
 
     # save each piece as a separate file
     for n, piece in enumerate(pieces):
@@ -71,6 +75,7 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--size', type=float, default=10.0)
-    parser.add_argument('--shape', nargs=3, type=int, default=(5,5,5))
+    parser.add_argument('--shape', nargs=3, type=int, metavar=('X','Y','Z'), default=(4,4,4))
     parser.add_argument('--stl', action='store_true')
+    parser.add_argument('--tol', type=float, default=.1)
     puzzle_cube(**vars(parser.parse_args()))
