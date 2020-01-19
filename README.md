@@ -22,6 +22,6 @@ python puzzle_cube.py [--size SIZE] [--shape X Y Z] [--stl]
 
 optional arguments:
 
- - *--size* — The size-length of a single cell in the puzzle. Default: 10 mm.
- - *--shape* — The dimensions of the puzzle. Default: (4, 4, 4)
- - *--stl* — Attempt to generate STL rather than SCAD files. (Requires the OpenSCAD)
+ - *size* — The size-length of a single cell in the puzzle. Default: 10 mm.
+ - *shape* — The dimensions of the puzzle. Default: (4, 4, 4)
+ - *stl* — Attempt to generate STL rather than SCAD files. (Requires the OpenSCAD)
