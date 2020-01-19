@@ -21,7 +21,7 @@ def element(x, y, size, r=1, tol=.1, segments=32):
 def connector(x, y, size, r=1, tol=.1):
     return translate([size*x+r+tol, size*y+r+tol, r+tol])(cube(size-2*(r+tol)))
 
-def puzzle_cube(size=10.0, shape=(5,5,5), stl=False, tol=.1):
+def puzzle_cube(size=10.0, shape=(4,4,4), stl=False, tol=.1):
     if any(i < 3 for i in shape):
         raise ValueError('Puzzle dimensions must be 3 or greater.')
 
